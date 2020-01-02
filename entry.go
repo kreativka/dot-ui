@@ -1,50 +1,16 @@
 package dotui
 
 import (
-	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/kreativka/dot-ui/desktop"
 )
 
 type ents struct {
-	list        [][]string
-	names       []*desktop.Entry
-	curr        int
-	start, end  int
-	iter, limit int
-	filter      string
-}
-
-func flatten(entries []*desktop.Entry) [][]string {
-	rv := make([][]string, 2)
-	for _, v := range entries {
-		rv[0] = append(rv[0], v.Name)
-
-		switch s := strings.Split(v.Exec, " "); {
-		case !strings.HasPrefix(s[0], "/") && len(s) == 1 && len(v.Name) > 1:
-			rv[1] = append(rv[1], trimRight(v.Exec))
-		case !strings.HasPrefix(s[0], "/") && len(s[0]) > 2:
-			rv[1] = append(rv[1], trimRight(s[0]))
-		default:
-			rv[1] = append(rv[1], "")
-		}
-	}
-
-	return rv
-}
-
-func (e ents) String() string {
-	return fmt.Sprintf(
-		"len(names) = %d, curr = %d, start = %d, end = %d, iter = %d, "+
-			"limit = %d, filter = %s",
-		len(e.names), e.curr, e.start, e.end, e.iter, e.limit, e.filter,
-	)
-}
-
-func (e ents) currIndex() int {
-	return e.iter + e.start
+	names                    []*desktop.Entry
+	list                     [][]string
+	filter                   string
+	curr, iter, limit, start int
 }
 
 func (e *ents) Next() bool {
@@ -56,8 +22,16 @@ func (e *ents) Next() bool {
 	return false
 }
 
+func (e *ents) Value() string {
+	return e.names[e.currIndex()].Name
+}
+
 func (e *ents) Reset() {
 	e.iter = -1
+}
+
+func (e ents) currIndex() int {
+	return e.iter + e.start
 }
 
 func (e *ents) IsCurrentHighlighted() bool {
@@ -66,14 +40,6 @@ func (e *ents) IsCurrentHighlighted() bool {
 
 func (e ents) IsCurrentEven() bool {
 	return e.iter%2 == 0
-}
-
-func (e *ents) Value() (string, error) {
-	if e.currIndex() >= len(e.names) || e.currIndex() < 0 {
-		return "", errors.New("index out of bounds")
-	}
-
-	return e.names[e.currIndex()].Name, nil
 }
 
 func (e ents) CurrentSelection() *desktop.Entry {
@@ -111,7 +77,7 @@ func (e *ents) CursorUp() bool {
 	return false
 }
 
-func (e *ents) handleResize(height, entryHeight int) bool {
+func (e *ents) handleResize(height, entryHeight int) {
 	limit := height / entryHeight
 
 	// Check if we should hide last non-fully visible entry.
@@ -122,11 +88,10 @@ func (e *ents) handleResize(height, entryHeight int) bool {
 		limit--
 	}
 
-	if e.limit == limit {
-		return false
-	}
-
-	if limit < e.limit {
+	switch {
+	case limit == e.limit:
+		return
+	case limit < e.limit:
 		// When shrinking hits cursor position, keep it on the last visible
 		// entry.
 		if e.curr >= e.start+limit {
@@ -134,9 +99,7 @@ func (e *ents) handleResize(height, entryHeight int) bool {
 				e.curr = limit + e.start - 1
 			}
 		}
-	}
-
-	if limit > e.limit {
+	case limit > e.limit:
 		// When growing continue showing next entries, when at the end: start
 		// showing previous entries.
 		if e.start > 0 && e.start+limit >= len(e.names) {
@@ -149,6 +112,24 @@ func (e *ents) handleResize(height, entryHeight int) bool {
 	}
 
 	e.limit = limit
+}
 
-	return true
+func flatten(entries []*desktop.Entry) [][]string {
+	names := make([]string, 0, len(entries))
+	execs := make([]string, 0, len(entries))
+
+	for _, v := range entries {
+		names = append(names, v.Name)
+
+		switch s := strings.Split(v.Exec, " "); {
+		case !strings.HasPrefix(s[0], "/") && len(s) == 1 && len(v.Name) > 1:
+			execs = append(execs, trimRight(v.Exec))
+		case !strings.HasPrefix(s[0], "/") && len(s[0]) > 2:
+			execs = append(execs, trimRight(s[0]))
+		default:
+			execs = append(execs, "")
+		}
+	}
+
+	return [][]string{names, execs}
 }

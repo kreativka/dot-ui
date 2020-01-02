@@ -1,4 +1,4 @@
-package dotui
+package theme
 
 import (
 	"image/color"
@@ -8,7 +8,8 @@ import (
 	"gioui.org/unit"
 )
 
-type theme struct {
+// Theme is simple theme
+type Theme struct {
 	Shaper *text.Shaper
 	Color  struct {
 		Primary color.RGBA
@@ -21,8 +22,9 @@ type theme struct {
 	TextSize unit.Value
 }
 
-func newTheme() *theme {
-	rv := &theme{
+// NewTheme returns simple theme struct
+func NewTheme() *Theme {
+	rv := &Theme{
 		Shaper:   font.Default(),
 		TextSize: unit.Sp(16),
 	}
@@ -37,12 +39,13 @@ func newTheme() *theme {
 	return rv
 }
 
-func (t *theme) Caption(txt string) label {
+// Caption returns label for profiling
+func (t *Theme) Caption(txt string) label {
 	return t.Label(t.TextSize.Scale(12.0/16.0), txt)
 }
 
 // Editor return editor
-func (t *theme) Editor(hint string) editor {
+func (t *Theme) Editor(hint string) editor {
 	return editor{
 		Font: text.Font{
 			Size: t.TextSize,

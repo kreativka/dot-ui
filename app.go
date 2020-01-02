@@ -17,15 +17,17 @@ import (
 	"gioui.org/unit"
 	"gioui.org/widget"
 	"github.com/kreativka/dot-ui/desktop"
+	"github.com/kreativka/dot-ui/theme"
 )
 
 // Env struct contains bs
 type Env struct {
-	theme   *theme
+	theme   *theme.Theme
 	entries []*desktop.Entry
 	editor  *widget.Editor
 
-	currList *ents
+	currList  *ents
+	localized bool
 }
 
 // App struct contains almost everything
@@ -34,17 +36,23 @@ type App struct {
 	env  Env
 	page *mainPage
 
-	// profiling.
+	// profiling
 	profiling   bool
 	profile     profile.Event
 	lastMallocs uint64
 }
 
 func (a App) executeCurrent() {
+	term := []string{"alacritty", "--command"}
 	entry := a.env.currList.CurrentSelection()
-
 	app := strings.Split(trimRight(entry.Exec), " ")
-	cmd := exec.Command(app[0], app[1:]...)
+
+	var cmd *exec.Cmd
+	if entry.Term {
+		cmd = exec.Command(term[0], append(term[1:], app[0:]...)...)
+	} else {
+		cmd = exec.Command(app[0], app[1:]...)
+	}
 
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	if err := cmd.Start(); err != nil {
@@ -92,9 +100,40 @@ func (a *App) layoutTimings(gtx *layout.Context) {
 	})
 }
 
+func (a *App) populateEntries() error {
+	if a.env.entries != nil {
+		return nil
+	}
+
+	xdgDirs, err := appendDirs()
+	if err != nil {
+		return err
+	}
+
+	entries, err := walk(xdgDirs, a.env.localized)
+	if err != nil {
+		return err
+	}
+
+	a.env.entries = entries
+
+	a.env.currList = &ents{
+		names: entries,
+		curr:  0,
+		start: 0,
+		list:  flatten(entries),
+	}
+
+	return nil
+}
+
 func (a *App) run() error {
 	gtx := layout.NewContext(a.w.Queue())
 	a.page = &mainPage{env: &a.env}
+
+	if err := a.populateEntries(); err != nil {
+		return err
+	}
 
 	for e := range a.w.Events() {
 		switch e := e.(type) {
@@ -119,38 +158,6 @@ func (a *App) run() error {
 			}
 		case system.DestroyEvent:
 			return e.Err
-		case system.StageEvent:
-			if e.Stage >= system.StageRunning {
-				if a.env.editor == nil {
-					a.env.editor = &widget.Editor{
-						SingleLine: true,
-						Submit:     true,
-					}
-				}
-
-				if a.env.entries == nil {
-					xdgDirs, err := appendDirs()
-					if err != nil {
-						log.Fatalln(err)
-					}
-
-					entries, err := walk(xdgDirs, true)
-					if err != nil {
-						log.Fatalln(err)
-					}
-
-					a.env.entries = entries
-					if a.env.currList == nil {
-						a.env.currList = &ents{
-							names: entries,
-							end:   0,
-							curr:  0,
-							start: 0,
-						}
-						a.env.currList.list = flatten(entries)
-					}
-				}
-			}
 		case system.FrameEvent:
 			gtx.Reset(e.Config, e.Size)
 

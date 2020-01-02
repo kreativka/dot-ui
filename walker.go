@@ -32,7 +32,6 @@ func walk(dirs []string, useLang bool) ([]*desktop.Entry, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		defer f.Close()
 
 		files, err := f.Readdirnames(-1)
@@ -41,24 +40,25 @@ func walk(dirs []string, useLang bool) ([]*desktop.Entry, error) {
 		}
 
 		for _, fn := range files {
-			if filepath.Ext(fn) == ".desktop" {
-				el, err := desktop.NewEntry(path.Join(dir, fn), nameLC, useLang)
-				if err == desktop.ErrHiddenEntry ||
-					err == desktop.ErrInvalidEntry || el == nil {
-					continue
-				}
-
-				if err != nil {
-					return nil, err
-				}
-
-				if seen[el.Name] {
-					el.Name = fmt.Sprintf("%s %s%d", el.Name, "EXTRA-", i)
-				}
-				seen[el.Name] = true
-
-				rv = append(rv, el)
+			if filepath.Ext(fn) != ".desktop" {
+				continue
 			}
+
+			el, err := desktop.NewEntry(path.Join(dir, fn), nameLC, useLang)
+			if err == desktop.ErrHiddenEntry ||
+				err == desktop.ErrInvalidEntry || el == nil {
+				continue
+			}
+			if err != nil {
+				return nil, err
+			}
+
+			if seen[el.Name] {
+				el.Name = fmt.Sprintf("%s %s%d", el.Name, "EXTRA-", i)
+			}
+			seen[el.Name] = true
+
+			rv = append(rv, el)
 		}
 	}
 

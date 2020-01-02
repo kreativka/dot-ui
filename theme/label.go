@@ -1,4 +1,4 @@
-package dotui
+package theme
 
 import (
 	"image/color"
@@ -24,7 +24,7 @@ type label struct {
 	shaper *text.Shaper
 }
 
-func (t *theme) Label(size unit.Value, txt string) label {
+func (t *Theme) Label(size unit.Value, txt string) label {
 	return label{
 		Text:  txt,
 		Color: t.Color.Text,
@@ -36,7 +36,7 @@ func (t *theme) Label(size unit.Value, txt string) label {
 	}
 }
 
-func (t *theme) LabelOdd(size unit.Value, txt string) label {
+func (t *Theme) LabelOdd(size unit.Value, txt string) label {
 	return label{
 		Text:  txt,
 		Color: t.Color.InvText,
@@ -54,10 +54,10 @@ func (l label) Layout(gtx *layout.Context) {
 	tl.Layout(gtx, l.shaper, l.Font, l.Text)
 }
 
-func (t *theme) Body(txt string) label {
+func (t *Theme) Body(txt string) label {
 	return t.Label(t.TextSize, txt)
 }
 
-func (t *theme) BodyOdd(txt string) label {
+func (t *Theme) BodyOdd(txt string) label {
 	return t.LabelOdd(t.TextSize, txt)
 }

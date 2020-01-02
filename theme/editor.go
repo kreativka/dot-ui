@@ -1,4 +1,4 @@
-package dotui
+package theme
 
 import (
 	"image/color"

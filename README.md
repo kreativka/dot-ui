@@ -4,9 +4,11 @@
 
 It's bemenu/dmenu/wldash/wofi like launcher. Best used with sway.
 
-It shows .desktop files from XDG directories, and flatpaks. Fuzzy searching within pretty names from ".desktop and executables. Defaults to localized names.
+It shows .desktop files from XDG directories, and flatpaks. Fuzzy searching within pretty names from ".desktop and executables. Defaults to not localized names, use -l flag for localized.
 
 Navigate through list using arrows and Ctrl+P/N.
+
+Launch terminal applications from .desktop files in alacritty.
 
 ## Installation
 
@@ -28,7 +30,7 @@ Add this to sway's config
 
 ```
     for_window [title="^dot-ui$"] floating enable
-    bindsym $mod+d exec dot-ui
+    bindsym $mod+d exec dot-ui -l
 ```
 
 ## License
