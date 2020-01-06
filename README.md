@@ -10,6 +10,8 @@ Navigate through list using arrows and Ctrl+P/N.
 
 Launch terminal applications from .desktop files in alacritty.
 
+![Screenshot](https://kreativka.github.io/dot-ui/img/screenshot.png)
+
 ## Installation
 
 For Linux you need Wayland and the wayland, x11, xkbcommon, GLES, EGL development packages. On Fedora 28 and newer, install the dependencies with the command
