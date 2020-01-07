@@ -22,6 +22,7 @@ type editor struct {
 	shaper *text.Shaper
 }
 
+// Layout editor
 func (e editor) Layout(gtx *layout.Context, editor *widget.Editor) {
 	var stack op.StackOp
 	stack.Push(gtx.Ops)
