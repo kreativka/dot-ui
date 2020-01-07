@@ -1,4 +1,4 @@
-package dotui
+package desktop
 
 import (
 	"testing"
@@ -25,7 +25,7 @@ func TestTrimRight(t *testing.T) {
 	}
 
 	for _, tt := range cases {
-		res := trimRight(tt.in)
+		res := TrimRight(tt.in)
 		if tt.out != res {
 			t.Errorf("trimRight(%q)\nwanted %q\ngot %q", tt.in, tt.out, res)
 		}
@@ -40,12 +40,12 @@ func BenchmarkTrimRight(b *testing.B) {
 	}{
 		{
 			"flatpak",
-			trimRight,
+			TrimRight,
 			"/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=signal --file-forwarding org.signal.Signal @@u %U @@",
 		},
 		{
 			"non Flatpak",
-			trimRight,
+			TrimRight,
 			"nvim %F",
 		},
 	}

@@ -46,7 +46,7 @@ type App struct {
 func (a App) executeCurrent() {
 	term := []string{"alacritty", "--command"}
 	entry := a.env.currList.CurrentSelection()
-	app := strings.Split(trimRight(entry.Exec), " ")
+	app := strings.Split(desktop.TrimRight(entry.Exec), " ")
 
 	var cmd *exec.Cmd
 	if entry.Term {
@@ -122,7 +122,7 @@ func (a *App) populateEntries() error {
 		names: entries,
 		curr:  0,
 		start: 0,
-		list:  flatten(entries),
+		list:  desktop.Flatten(entries),
 	}
 
 	return nil

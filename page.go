@@ -75,7 +75,7 @@ func (m *mainPage) filterEntries(pattern string) {
 	if pattern == "" && entries.Len() != len(m.env.entries) {
 		entries.filter = pattern
 		entries.names = m.env.entries
-		entries.list = flatten(entries.names)
+		entries.list = desktop.Flatten(entries.names)
 
 		return
 	}
@@ -86,7 +86,7 @@ func (m *mainPage) filterEntries(pattern string) {
 		list = entries.names
 	} else {
 		list = m.env.entries
-		entries.list = flatten(list)
+		entries.list = desktop.Flatten(list)
 	}
 
 	res := filterMatches(list, entries.list, pattern)
@@ -105,7 +105,7 @@ func (m *mainPage) filterEntries(pattern string) {
 	}
 
 	entries.filter = pattern
-	entries.list = flatten(res)
+	entries.list = desktop.Flatten(res)
 	entries.names = res
 }
 

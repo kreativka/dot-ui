@@ -429,7 +429,6 @@ var entries = []*desktop.Entry{
 		Type: "Application",
 		URL:  ""},
 }
-
 var entriesFilteredByA = []*desktop.Entry{
 	{Exec: "alacritty",
 		Name: "Alacritty",
@@ -568,58 +567,6 @@ var names = []*desktop.Entry{
 	{Name: "System monitor GNOME"},
 	{Name: "Neovim"},
 	{Name: "Notepad"},
-}
-
-func TestFlatten(t *testing.T) {
-	tests := []struct {
-		name string
-		in   []*desktop.Entry
-		out  [][]string
-	}{
-		{
-			name: "simple flatten",
-			in: []*desktop.Entry{
-				{Name: "Alacritty"},
-				{Name: "Archives"},
-			},
-			out: [][]string{
-				{"Alacritty", "Archives"},
-				{"", ""},
-			},
-		},
-		{
-			name: "flatten some execs",
-			in: []*desktop.Entry{
-				{Name: "Alacritty", Exec: "/usr/bin/alacritty"},
-				{Name: "Archives", Exec: "file-roller"},
-			},
-			out: [][]string{
-				{"Alacritty", "Archives"},
-				{"", "file-roller"},
-			},
-		},
-		{
-			name: "nicely flat app names and execs",
-			in: []*desktop.Entry{
-				{Name: "Alacritty"},
-				{Name: "Archives"},
-				{Name: "Virtual Machines Manager", Exec: "virt-manager"},
-				{Name: "Boxes", Exec: "gnome-boxes %U"},
-			},
-			out: [][]string{
-				{"Alacritty", "Archives", "Virtual Machines Manager", "Boxes"},
-				{"", "", "virt-manager", "gnome-boxes"},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := flatten(tt.in)
-			if !reflect.DeepEqual(tt.out, got) {
-				t.Errorf("flatten(entries) wanted %q got %q", tt.out, got)
-			}
-		})
-	}
 }
 
 func TestEntriesIteratorNext(t *testing.T) {
@@ -910,12 +857,6 @@ func TestEntriesCursorUp(t *testing.T) {
 		if tt.in.curr != tt.out {
 			t.Errorf("CursorUp() times %d got %d expected %d", tt.times, tt.in.curr, tt.out)
 		}
-	}
-}
-
-func BenchmarkFlatten(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		_ = flatten(entries)
 	}
 }
 

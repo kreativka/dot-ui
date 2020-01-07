@@ -8,7 +8,7 @@ import (
 )
 
 func BenchmarkFilterMatches(b *testing.B) {
-	elems := flatten(entries)
+	elems := desktop.Flatten(entries)
 
 	for i := 0; i < b.N; i++ {
 		_ = filterMatches(entries, elems, "A")
@@ -303,7 +303,7 @@ func TestFilterEntries(t *testing.T) {
 				entries: entries,
 				currList: &ents{
 					names:  entries,
-					list:   flatten(entries),
+					list:   desktop.Flatten(entries),
 					curr:   21,
 					limit:  10,
 					start:  10,
@@ -314,7 +314,7 @@ func TestFilterEntries(t *testing.T) {
 				entries: entries,
 				currList: &ents{
 					names:  entriesFilteredByA,
-					list:   flatten(entriesFilteredByA),
+					list:   desktop.Flatten(entriesFilteredByA),
 					curr:   9,
 					limit:  10,
 					start:  0,

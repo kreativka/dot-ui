@@ -1,8 +1,6 @@
 package dotui
 
 import (
-	"strings"
-
 	"github.com/kreativka/dot-ui/desktop"
 )
 
@@ -112,24 +110,4 @@ func (e *ents) handleResize(height, entryHeight int) {
 	}
 
 	e.limit = limit
-}
-
-func flatten(entries []*desktop.Entry) [][]string {
-	names := make([]string, 0, len(entries))
-	execs := make([]string, 0, len(entries))
-
-	for _, v := range entries {
-		names = append(names, v.Name)
-
-		switch s := strings.Split(v.Exec, " "); {
-		case !strings.HasPrefix(s[0], "/") && len(s) == 1 && len(v.Name) > 1:
-			execs = append(execs, trimRight(v.Exec))
-		case !strings.HasPrefix(s[0], "/") && len(s[0]) > 2:
-			execs = append(execs, trimRight(s[0]))
-		default:
-			execs = append(execs, "")
-		}
-	}
-
-	return [][]string{names, execs}
 }

@@ -1,8 +1,9 @@
-package dotui
+package desktop
 
 import "strings"
 
-func trimRight(cmd string) string {
+// TrimRight returns string without placeholders for addittional arguments
+func TrimRight(cmd string) string {
 	if len(cmd) < 2 || cmd == "" {
 		return cmd
 	}
