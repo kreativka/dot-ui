@@ -28,17 +28,21 @@ func (x XDG) DataDirs() []string {
 // Returns error when $HOME is not set, don't check if directory exists.
 func NewXDG() (*XDG, error) {
 	rv := &XDG{}
+
 	dataHome, err := parseDataHome()
 	if err != nil {
 		return nil, err
 	}
+
 	rv.dataHome = dataHome
 	rv.dataDirs = parseDataDirs()
+
 	return rv, nil
 }
 
 func parseDataDirs() []string {
 	var rv []string
+
 	if s, ok := os.LookupEnv("XDG_DATA_DIRS"); s != "" && ok {
 		dirs := strings.Split(s, ":")
 		for _, el := range dirs {
@@ -48,9 +52,11 @@ func parseDataDirs() []string {
 			}
 		}
 	}
+
 	if len(rv) == 0 {
 		rv = []string{"/usr/local/share/", "/usr/share/"}
 	}
+
 	return rv
 }
 
@@ -68,11 +74,13 @@ func parseDataHome() (string, error) {
 			}
 		}
 	}
+
 	return path.Join(homeDir, ".local/share"), nil
 }
 
 func parseHome() (string, error) {
 	var rv string
+
 	if s, ok := os.LookupEnv("HOME"); ok {
 		s = filepath.Clean(s)
 		if s == "." {
@@ -80,5 +88,6 @@ func parseHome() (string, error) {
 		}
 		rv = s
 	}
+
 	return rv, nil
 }

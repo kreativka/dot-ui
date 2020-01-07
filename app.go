@@ -17,6 +17,7 @@ import (
 	"gioui.org/unit"
 	"gioui.org/widget"
 	"github.com/kreativka/dot-ui/desktop"
+	"github.com/kreativka/dot-ui/dirs"
 	"github.com/kreativka/dot-ui/theme"
 )
 
@@ -105,12 +106,12 @@ func (a *App) populateEntries() error {
 		return nil
 	}
 
-	xdgDirs, err := appendDirs()
+	xdgDirs, err := dirs.AppendXDGDirs()
 	if err != nil {
 		return err
 	}
 
-	entries, err := walk(xdgDirs, a.env.localized)
+	entries, err := dirs.Walk(xdgDirs, a.env.localized)
 	if err != nil {
 		return err
 	}

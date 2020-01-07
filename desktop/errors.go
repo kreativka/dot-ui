@@ -2,5 +2,7 @@ package desktop
 
 import "errors"
 
-var ErrInvalidEntry = errors.New("invalid entry")
-var ErrHiddenEntry = errors.New("hidden entry")
+var (
+	ErrHiddenEntry  = errors.New("hidden entry")
+	ErrInvalidEntry = errors.New("invalid entry")
+)

@@ -1,4 +1,4 @@
-package dotui
+package dirs
 
 import (
 	"fmt"
@@ -11,9 +11,11 @@ import (
 	"golang.org/x/text/language"
 )
 
-func walk(dirs []string, useLang bool) ([]*desktop.Entry, error) {
+// Walk through xdg directories and return slice of desktop entries from .dot
+// files found in that directories.
+func Walk(dirs []string, useLang bool) ([]*desktop.Entry, error) {
 	if len(dirs) == 0 {
-		return nil, errEmptyList
+		return nil, ErrEmptyList
 	}
 
 	var nameLC string
@@ -44,7 +46,7 @@ func walk(dirs []string, useLang bool) ([]*desktop.Entry, error) {
 				continue
 			}
 
-			el, err := desktop.NewEntry(path.Join(dir, fn), nameLC, useLang)
+			el, err := desktop.NewEntry(path.Join(dir, fn), nameLC)
 			if err == desktop.ErrHiddenEntry ||
 				err == desktop.ErrInvalidEntry || el == nil {
 				continue

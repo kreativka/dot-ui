@@ -1,4 +1,4 @@
-package dotui
+package dirs
 
 import (
 	"os"
@@ -7,7 +7,9 @@ import (
 	"github.com/kreativka/dot-ui/xdg"
 )
 
-func appendDirs() ([]string, error) {
+// AppendXDGDirs returns slice of xdg standard dirs to be later checked for .dot
+// files
+func AppendXDGDirs() ([]string, error) {
 	const appDir = "/applications"
 
 	XDG, err := xdg.NewXDG()
